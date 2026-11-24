@@ -1,16 +1,124 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vocabulary Quiz</title><style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f5f7fb;color:#172033}main{max-width:760px;margin:auto;padding:22px 14px 40px}header{text-align:center}h1{font-size:26px;margin:6px 0}.sub{color:#667085}.panel{background:white;border:1px solid #e4e7ec;border-radius:16px;padding:16px;margin-top:16px;box-shadow:0 4px 18px #17203312}.controls{display:flex;gap:8px;flex-wrap:wrap}button,select,input{font:inherit;border-radius:10px}button{border:0;padding:12px 15px;background:#eef1f5;font-weight:700;min-height:48px}button.primary{background:#5b5ce2;color:#fff}select{padding:12px;border:1px solid #d9dde5;background:#fff}.quiz{text-align:center}.unit{font-size:14px;font-weight:800;color:#5b5ce2}.word{font-size:34px;font-weight:850;margin:12px 0 22px;word-break:break-word}input{width:100%;padding:14px;border:2px solid #d9dde5;text-align:center;font-size:20px;outline:none}input:focus{border-color:#5b5ce2}.actions{display:flex;gap:8px;justify-content:center;margin-top:12px}.actions button{flex:1}.feedback{min-height:54px;margin:14px auto;font-weight:800;font-size:18px}.ok{color:#168a55}.bad{color:#c0392b}.stats{display:flex;justify-content:space-between;color:#667085;font-size:14px;margin-bottom:10px}.bar{height:8px;background:#e8ebf1;border-radius:9px;overflow:hidden}.bar>i{display:block;height:100%;background:#5b5ce2;width:0}.hidden{display:none}.result{text-align:center}.score{font-size:48px;font-weight:900}@media(max-width:600px){main{padding:12px 10px 28px}h1{font-size:23px}.word{font-size:29px}.panel{padding:12px}.controls button{flex:1}input{font-size:18px}}</style></head><body><main><header><h1>📚 Essential Vocabulary 100</h1><p class="sub">영단어를 보고 한국어 뜻을 입력하세요</p></header><section class="panel"><div class="controls" id="units"></div><div class="controls" style="margin-top:8px"><select id="order"><option value="shuffle">랜덤</option><option value="ordered">순서대로</option></select><button class="primary" id="start">퀴즈 시작</button></div></section><section class="panel hidden" id="quiz"><div class="stats"><span id="count"></span><span id="score"></span></div><div class="bar"><i id="progress"></i></div><div class="quiz"><div class="unit" id="unit"></div><div class="word" id="word"></div><input id="answer" autocomplete="off" placeholder="한국어 뜻을 입력하세요"><div class="feedback" id="feedback"></div><div class="actions"><button class="primary" id="submit">제출</button><button id="skip">다음</button></div></div></section><section class="panel result hidden" id="result"><h2>🎉 결과</h2><div class="score" id="final"></div><p id="msg"></p><button class="primary" id="retry">다시 풀기</button></section></main><script>
-const data=[["Unit 1","Interest rate","금리"],["Unit 1","Loan","대출"],["Unit 1","Mortgage","담보대출"],["Unit 1","Credit score","신용점수"],["Unit 1","Investment","투자"],["Unit 1","Asset","자산"],["Unit 1","Liability","부채"],["Unit 1","Equity","지분"],["Unit 1","Dividend","배당금"],["Unit 1","Bond","채권"],["Unit 1","Bankruptcy","파산"],["Unit 1","Capital","자본"],["Unit 1","Stock market","주식시장"],["Unit 1","Portfolio","포트폴리오"],["Unit 1","Audit","감사"],["Unit 1","Expense","경비"],["Unit 1","Cash flow","현금 흐름"],["Unit 1","Budget","예산"],["Unit 1","Savings account","저축 계좌"],["Unit 1","Currency exchange rate","환율"],["Unit 2","Branding","브랜드명 부여작업"],["Unit 2","Campaign","캠페인"],["Unit 2","Target audience","대상 고객"],["Unit 2","Market research","시장 조사"],["Unit 2","Consumer behavior","소비자 행동"],["Unit 2","Slogan","슬로건"],["Unit 2","Advertisement","광고"],["Unit 2","Promotional offer","프로모션 제안"],["Unit 2","Sales pitch","구매를 유도하는 설득"],["Unit 2","Brand loyalty","브랜드 충성도"],["Unit 2","Product placement","제품 배치"],["Unit 2","Digital marketing","디지털 마케팅"],["Unit 2","Market share","시장 점유율"],["Unit 2","Enclosed","동봉된"],["Unit 2","Customer retention","고객 유지"],["Unit 2","Public relations","홍보"],["Unit 2","Fundraising","기금 모금"],["Unit 2","Endorsement","후원"],["Unit 2","Brochure","브로슈어"],["Unit 2","Survey","설문조사"],["Unit 3","Recruitment","채용"],["Unit 3","Onboarding","입사교육"],["Unit 3","Job description","직무설명"],["Unit 3","Interview","면접"],["Unit 3","Performance review","성과 평가"],["Unit 3","Promotion","승진"],["Unit 3","Resignation","사직"],["Unit 3","Employee benefits","직원 복지 혜택"],["Unit 3","Training program","교육 프로그램"],["Unit 3","Work-life balance","일과 삶의 균형"],["Unit 3","Compensation","보상"],["Unit 3","Retirement plan","퇴직 연금 제도"],["Unit 3","Vacation days","휴가 일수"],["Unit 3","Employee engagement","직원 참여"],["Unit 3","Workplace culture","직장 문화"],["Unit 3","Job satisfaction","직무 만족도"],["Unit 3","Conflict resolution","갈등 해결"],["Unit 3","Team-building","팀 빌딩"],["Unit 3","Payroll","급여"],["Unit 3","Job applicant","구직자"],["Unit 4","Memo","메모"],["Unit 4","Presentation","프레젠테이션"],["Unit 4","Report","보고서"],["Unit 4","Agenda","의제"],["Unit 4","Conference call","전화 회의"],["Unit 4","Client","고객"],["Unit 4","Minutes","회의록"],["Unit 4","Briefing","브리핑"],["Unit 4","Proposal","제안서"],["Unit 4","Update","업데이트"],["Unit 4","Newsletter","뉴스레터"],["Unit 4","Correspondence","서신"],["Unit 4","Bulletin","게시"],["Unit 4","Internal communication","내부 의사소통"],["Unit 4","Press release","보도 자료"],["Unit 4","Announcement","발표"],["Unit 4","Executive summary","요약본"],["Unit 4","Action item","실행 항목"],["Unit 4","Follow-up","후속 조치"],["Unit 4","Formal","공식적인"],["Unit 6","Shipment","수화물, 수송"],["Unit 6","Cargo","화물"],["Unit 6","Freight","화물, 화물 운송"],["Unit 6","Warehouse","창고"],["Unit 6","Inventory","재고"],["Unit 6","Dispatch","발송"],["Unit 6","Carrier","수송 회사"],["Unit 6","Bill of lading","선하 증권"],["Unit 6","Customs clearance","통관"],["Unit 6","Supply chain","연쇄적인 생산 및 공급 과정"],["Unit 6","Distribution center","유통 센터"],["Unit 6","Delivery","배달"],["Unit 6","Logistics","실행 계획"],["Unit 6","Tracking number","추적 번호"],["Unit 6","Container","컨테이너"],["Unit 6","Fleet","선단"],["Unit 6","Route","경로"],["Unit 6","Transit","수송"],["Unit 6","Dock","부두, 선창"],["Unit 6","Packing list","포장 명세서"]];
-const midtermData = [["중간고사","Interest rate","금리"],["중간고사","apply for","지원하다"],["중간고사","mortgage","담보대출"],["중간고사","be paying off","빚을 다 갚는 중이다"],["중간고사","investment","투자"],["중간고사","real estate","부동산"],["중간고사","Asset","자산"],["중간고사","liability","부채"],["중간고사","balance sheet","재정증명서"],["중간고사","Equity","지분"],["중간고사","Dividend","배당금"],["중간고사","bond","채권"],["중간고사","practical","실용적인"],["중간고사","loyalty","충성도"],["중간고사","be pleased with","~에 기뻐하다"],["중간고사","raise funds","기금을 모으다"],["중간고사","filed","신청하다"],["중간고사","a public offering","주식 공모"],["중간고사","portfolio","구직서 내는 것, 증권보유 열람표"],["중간고사","budget","예산"],["중간고사","Savings account","저축계좌"],["중간고사","Saving","저축된 돈, 예금"],["중간고사","transferred","이체하다"],["중간고사","sales pitch","구매를 유도하는 설득"],["중간고사","consistency","일관성"],["중간고사","market share","시장 점유율"],["중간고사","endorsement","홍보, 지지, 보증"],["중간고사","brochure","브로슈어"],["중간고사","those","사람들"],["중간고사","bankruptcy","파산"],["중간고사","known for","~로 유명하다"],["중간고사","be known for","~로 알려지다"],["중간고사","division of labor","노동의 분업"],["중간고사","affordable","경제적으로 감당할 수 있을 만한"],["중간고사","resident","거주자"],["중간고사","information","정보"],["중간고사","pay off","성과를 올리다, 성공하다"],["중간고사","endangered","위험에 처한"],["중간고사","developing country","개발도상국"],["중간고사","developed country","선진국"],["중간고사","performance review","성과 평가"],["중간고사","annual","연간의"],["중간고사","compensation","보상"],["중간고사","competitive","경쟁력 있는, 능력 있는, 경쟁을 좋아하는"],["중간고사","factor","요인"],["중간고사","applicant","지원자, 구직자"],["중간고사","be entitled","자격을 부여받다"],["중간고사","expert","전문가"],["중간고사","policy","정책"],["중간고사","quarterly","분기별"],["중간고사","Agenda","의제"],["중간고사","in advance","미리"],["중간고사","conference call","(3인 이상) 전화 회의"],["중간고사","proposal","제안서"],["중간고사","initiative","계획, 결단력, 진취성, 주도"],["중간고사","all-hands","총원"],["중간고사","Executive","경영간부, 경영진"],["중간고사","Follow-up","후속 조치"],["중간고사","suffer from","고통을 겪다"],["중간고사","symptom","증상"],["중간고사","be popular with","~에게 인기가 있다"],["중간고사","alternate","대안적인"],["중간고사","deal with","다루다, 대처하다"],["중간고사","Freight","화물, 화물 운송 비용"],["중간고사","Inventory","재고, 물품 목록"],["중간고사","customs clearance","통관"],["중간고사","logistics","실행 계획, 물류"],["중간고사","tracking number","추적 번호"],["중간고사","Formal","공식적인"],["중간고사","one of the + 복수명사","~ 중 하나"]];
-let mode="all",quiz=[],i=0,correct=0,wrong=0,locked=false;
-const $=id=>document.getElementById(id), norm=s=>s.replace(/\s+/g,"");
-["all","1","2","3","4","6","midterm"].forEach((u,n)=>{let b=document.createElement("button");b.textContent=u==="all"?"전체 100":u==="midterm"?"중간고사 단어": "Unit "+u;b.onclick=()=>{mode=u;document.querySelectorAll("#units button").forEach(x=>x.classList.remove("primary"));b.classList.add("primary")};$("units").appendChild(b);if(n===0)b.classList.add("primary")});
-function selected(){return mode==="all"?data:mode==="midterm"?midtermData:data.filter(x=>x[0]==="Unit "+mode)}
-function shuffle(a){a=[...a];for(let j=a.length-1;j>0;j--){let k=Math.floor(Math.random()*(j+1));[a[j],a[k]]=[a[k],a[j]]}return a}
-function start(){quiz=$("order").value==="shuffle"?shuffle(selected()):[...selected()];i=0;correct=0;wrong=0;$("result").classList.add("hidden");$("quiz").classList.remove("hidden");show()}
-function show(){if(i>=quiz.length)return finish();locked=false;let q=quiz[i];$("count").textContent=(i+1)+" / "+quiz.length;$("score").textContent="정답 "+correct+" · 오답 "+wrong;$("progress").style.width=(i/quiz.length*100)+"%";$("unit").textContent=q[0];$("word").textContent=q[1];$("answer").value="";$("answer").disabled=false;$("feedback").textContent="";$("submit").textContent="제출";$("answer").focus()}
-function check(){if(locked)return;let q=quiz[i],v=norm($("answer").value);if(!v)return;$("answer").disabled=true;locked=true;if(v===norm(q[2])){correct++;$("feedback").innerHTML='<span class="ok">✓ 정답!</span>';setTimeout(()=>{i++;show()},550)}else{wrong++;$("feedback").innerHTML='<span class="bad">✗ 오답</span><br>정답: '+q[2];$("submit").textContent=i===quiz.length-1?"결과 보기":"다음";$("score").textContent="정답 "+correct+" · 오답 "+wrong}}
-function next(){if(!locked)return;i++;show()}
-function finish(){$("quiz").classList.add("hidden");$("result").classList.remove("hidden");let p=Math.round(correct/quiz.length*100);$("final").textContent=correct+" / "+quiz.length;$("msg").textContent=p===100?"완벽해요! 🎉":p>=80?"아주 잘했어요! "+p+"점":p+"점 — 틀린 단어를 다시 복습해보세요."}
-$("start").onclick=start;$("submit").onclick=()=>locked?next():check();$("skip").onclick=next;$("retry").onclick=start;$("answer").addEventListener("keydown",e=>{if(e.key==="Enter")locked?next():check()});
-</script></body></html>
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f7fb">
+<title>Essential Vocabulary - Final Exam</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f5f7fb;color:#172033}
+main{max-width:780px;margin:auto;padding:22px 14px 40px}header{text-align:center}h1{font-size:26px;margin:6px 0}.sub{color:#667085}
+.panel{background:white;border:1px solid #e4e7ec;border-radius:16px;padding:16px;margin-top:16px;box-shadow:0 4px 18px #17203312}
+.controls{display:flex;gap:8px;flex-wrap:wrap}button,select,input{font:inherit;border-radius:10px}
+button{border:0;padding:12px 15px;background:#eef1f5;font-weight:700;min-height:46px;cursor:pointer}
+button.primary{background:#5b5ce2;color:#fff}button:disabled{opacity:.5;cursor:not-allowed}
+select{padding:12px;border:1px solid #d9dde5;background:#fff}
+.quiz{text-align:center}.unit{font-size:14px;font-weight:800;color:#5b5ce2}
+.word{font-size:34px;font-weight:850;margin:12px 0 8px;word-break:break-word}
+.word.important{color:#d92d20}.important-label{display:inline-block;background:#fee4e2;color:#b42318;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800;margin-bottom:12px}
+input{width:100%;padding:14px;border:2px solid #d9dde5;text-align:center;font-size:20px;outline:none}
+input:focus{border-color:#5b5ce2}.actions{display:flex;gap:8px;justify-content:center;margin-top:12px}.actions button{flex:1}
+.feedback{min-height:54px;margin:14px auto;font-weight:800;font-size:18px}.ok{color:#168a55}.bad{color:#c0392b}
+.stats{display:flex;justify-content:space-between;color:#667085;font-size:14px;margin-bottom:10px}
+.bar{height:8px;background:#e8ebf1;border-radius:9px;overflow:hidden}.bar>i{display:block;height:100%;background:#5b5ce2;width:0}
+.hidden{display:none}.result{text-align:center}.score{font-size:48px;font-weight:900}
+.hint{font-size:13px;color:#667085;margin:10px 0 0}.mode-button{flex:1;min-width:100px}
+.mode-button.selected{background:#5b5ce2;color:white}
+.result-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.result-actions button{flex:1}
+@media(max-width:600px){main{padding:12px 10px 28px}h1{font-size:23px}.word{font-size:29px}.panel{padding:12px}.controls button{flex:1}input{font-size:18px}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>📚 Essential Vocabulary</h1><p class="sub">Unit 8–12 · Final Exam Vocabulary</p></header>
+<section class="panel">
+  <strong>시험 범위 선택</strong>
+  <div class="controls" id="units" style="margin-top:10px"></div>
+  <div class="controls" style="margin-top:10px">
+    <select id="order" aria-label="문제 순서"><option value="shuffle">랜덤 출제</option><option value="ordered">순서대로</option></select>
+    <button class="primary" id="start">퀴즈 시작</button>
+  </div>
+  <p class="hint"><span style="color:#d92d20;font-weight:800">★ 중요</span> 표시된 기말고사 단어는 빨간색으로 표시됩니다.</p>
+</section>
+<section class="panel hidden" id="quiz">
+  <div class="stats"><span id="count"></span><span id="score"></span></div><div class="bar"><i id="progress"></i></div>
+  <div class="quiz"><div class="unit" id="unit"></div><div class="word" id="word"></div><div id="importantLabel" class="important-label hidden">★ 기말고사 중요 단어</div>
+  <input id="answer" autocomplete="off" placeholder="한국어 뜻을 입력하세요">
+  <div class="feedback" id="feedback"></div>
+  <div class="actions"><button class="primary" id="submit">제출</button><button id="skip">모르겠어요</button></div></div>
+</section>
+<section class="panel result hidden" id="result">
+  <h2>🎉 시험 결과</h2><div class="score" id="final"></div><p id="msg"></p>
+  <div class="result-actions"><button class="primary" id="retry">같은 범위 다시 풀기</button><button id="retryWrong">오답만 다시 풀기</button></div>
+  <p class="hint" id="wrongSummary"></p>
+</section>
+</main>
+<script>
+const data = [
+["Unit 8","Lease","임대"],["Unit 8","Tenant","세입자"],["Unit 8","Landlord","집주인"],["Unit 8","Mortgage","담보 대출"],["Unit 8","Property value","부동산 가치"],
+["Unit 8","Real estate agent","부동산 업자"],["Unit 8","Down payment","계약금"],["Unit 8","Appraisal","평가"],["Unit 8","Foreclosure","압류"],["Unit 8","Equity","자기 자본, 주식"],
+["Unit 8","Title","소유권, 소유증서"],["Unit 8","Deed","증서"],["Unit 8","Listing","목록"],["Unit 8","Inspection","점검, 검사"],["Unit 8","Zoning","지역, 구역"],
+["Unit 8","Renovation","개조, 보수"],["Unit 8","Condominium","콘도미니엄"],["Unit 8","Mortgage rate","주택 담보 대출 금리"],["Unit 8","Liability","법적 책임"],["Unit 8","Closing costs","부동산 매매 수수료"],
+["Unit 9","Merger","합병"],["Unit 9","Acquisition","인수"],["Unit 9","Revenue","수익"],["Unit 9","Profit","이익"],["Unit 9","Stakeholder","이해관계자"],
+["Unit 9","Alliance","연합"],["Unit 9","Contract","계약"],["Unit 9","Invoice","송장"],["Unit 9","Negotiation","협상"],["Unit 9","Executive","경영진"],
+["Unit 9","Market share","시장 점유율"],["Unit 9","Dividend","배당금"],["Unit 9","Overhead","간접비"],["Unit 9","Product line","제품 라인"],["Unit 9","Entrepreneur","기업가"],
+["Unit 9","Supply chain","공급망"],["Unit 9","Vendor","공급업체"],["Unit 9","Inventory","재고"],["Unit 9","Wholesaler","도매업체"],["Unit 9","Profit margin","이익 마진"],
+["Unit 10","Assembly line","공정 라인"],["Unit 10","Quality control","품질 관리"],["Unit 10","Raw materials","원자재"],["Unit 10","Production schedule","생산 일정"],["Unit 10","Machinery","기계"],
+["Unit 10","Workforce","인력"],["Unit 10","Output","생산량"],["Unit 10","Supplier","공급업체"],["Unit 10","Inventory","재고"],["Unit 10","Packaging","포장"],
+["Unit 10","Shipment","배송"],["Unit 10","Efficiency","효율성"],["Unit 10","Automation","자동화"],["Unit 10","Prototype","프로토타입, 원형"],["Unit 10","Fabrication","제작"],
+["Unit 10","Manufacturing Process","제조 공정"],["Unit 10","Material handling","자재 취급"],["Unit 10","Warehouse","창고"],["Unit 10","Batch","배치"],["Unit 10","Inspection","검사"],
+["Unit 11","Hazard","위험"],["Unit 11","First aid","응급 처치"],["Unit 11","Safety gear","안전 장비"],["Unit 11","Emergency exit","비상구"],["Unit 11","Fire drill","소방 훈련"],
+["Unit 11","Workplace safety","직장 안전"],["Unit 11","Accident report","사고 보고서"],["Unit 11","Health regulations","건강 규정"],["Unit 11","Protective equipment","보호 장비"],["Unit 11","Risk assessment","위험 평가"],
+["Unit 11","Ergonomics","인체공학"],["Unit 11","Respirator","호흡 보호구"],["Unit 11","Safety Committee","안전 위원회"],["Unit 11","Inspection","검사"],["Unit 11","Compliance","규정 준수"],
+["Unit 11","Evacuation","대피"],["Unit 11","Contamination","오염"],["Unit 11","Quarantine","격리"],["Unit 11","PPE (Personal Protective Equipment)","개인 보호 장비"],["Unit 11","Safety audit","안전 감사"],
+["Unit 12","Complaint","불만"],["Unit 12","Inquiries","문의"],["Unit 12","Feedback","피드백"],["Unit 12","Return policy","반품 정책"],["Unit 12","Warranty","보증"],
+["Unit 12","Refund","환불"],["Unit 12","Helpdesk","업무지원센터"],["Unit 12","Troubleshooting","문제 해결"],["Unit 12","Customer satisfaction","고객 만족"],["Unit 12","Service Quality","서비스 품질"],
+["Unit 12","User Experience","사용자 경험"],["Unit 12","Call center","콜 센터"],["Unit 12","Resolution","해결"],["Unit 12","Service level agreement (SLA)","서비스 수준 계약"],["Unit 12","Follow-up","후속 조치"],
+["Unit 12","Client","고객"],["Unit 12","FAQ (Frequently Asked Questions)","자주 묻는 질문"],["Unit 12","Queue","대기 줄"],["Unit 12","Knowledge base","지식창고"],["Unit 12","Customer loyalty","고객 충성도"]
+];
+const finalData = [
+["기말고사","the protégé effect","가르치며 배우는 효과",true],
+["기말고사","sustained","지속가능한",true],
+["기말고사","mortgage","담보대출",false],
+["기말고사","real estate","부동산",true],
+["기말고사","foreclosure","압류",false],
+["기말고사","Equity","자기지분, 주식",false],
+["기말고사","locked in","고정짓다, 확정짓다",false],
+["기말고사","liability","법적책임",true],
+["기말고사","appropriate","적절한",true],
+["기말고사","market reach","시장범위",false],
+["기말고사","executive","경영진",true],
+["기말고사","dividend","배당금",true],
+["기말고사","reliable","믿을만한, 신뢰할만한",false],
+["기말고사","consequently","결과적으로",false],
+["기말고사","raw materials","원자재",false],
+["기말고사","inventory","재고",false],
+["기말고사","eco-friendly","친환경적인",false],
+["기말고사","automation","자동화",false],
+["기말고사","manual","육체의",false],
+["기말고사","mandatory","의무적인",false],
+["기말고사","equipment","장비",false],
+["기말고사","compliance","규정준수",false],
+["기말고사","evacuation","대피",false],
+["기말고사","contamination","오염",true],
+["기말고사","quarantine","격리",false],
+["기말고사","hazardous","해로운",true],
+["기말고사","audit","감사",false]
+];
+let mode="all", quiz=[], index=0, correct=0, wrong=0, wrongItems=[], locked=false, lastSelection=[];
+const $=id=>document.getElementById(id);
+const normalize=s=>s.toLocaleLowerCase().replace(/\s+/g,"").replace(/[.,!?]/g,"");
+function shuffle(list){const a=[...list];for(let j=a.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[a[j],a[k]]=[a[k],a[j]];}return a;}
+const choices=[["all","전체 단어 100개"],["8","Unit 8"],["9","Unit 9"],["10","Unit 10"],["11","Unit 11"],["12","Unit 12"],["final","기말고사 27개"],["important","★ 중요 단어만"]];
+choices.forEach(([value,label],i)=>{const b=document.createElement("button");b.className="mode-button"+(i===0?" selected":"");b.textContent=label;b.onclick=()=>{mode=value;document.querySelectorAll("#units button").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");};$("units").appendChild(b);});
+function selected(){if(mode==="all")return data;if(mode==="final")return finalData;if(mode==="important")return finalData.filter(x=>x[3]);return data.filter(x=>x[0]==="Unit "+mode);}
+function start(list){lastSelection=list||selected();quiz=$("order").value==="shuffle"?shuffle(lastSelection):[...lastSelection];index=0;correct=0;wrong=0;wrongItems=[];$("result").classList.add("hidden");$("quiz").classList.remove("hidden");show();}
+function show(){if(index>=quiz.length){finish();return;}locked=false;const q=quiz[index];$("count").textContent=(index+1)+" / "+quiz.length;$("score").textContent="정답 "+correct+" · 오답 "+wrong;$("progress").style.width=(index/quiz.length*100)+"%";$("unit").textContent=q[0];$("word").textContent=q[1];$("word").classList.toggle("important",!!q[3]);$("importantLabel").classList.toggle("hidden",!q[3]);$("answer").value="";$("answer").disabled=false;$("feedback").textContent="";$("submit").textContent="제출";$("answer").focus();}
+function advance(){index++;show();}
+function check(){if(locked)return;const q=quiz[index],value=normalize($("answer").value);if(!value)return;$("answer").disabled=true;locked=true;if(value===normalize(q[2])){correct++;$("feedback").innerHTML='<span class="ok">✓ 정답!</span>';setTimeout(advance,500);}else{wrong++;wrongItems.push(q);$("feedback").innerHTML='<span class="bad">✗ 오답</span><br>정답: '+q[2];$("submit").textContent="다음 문제";$("score").textContent="정답 "+correct+" · 오답 "+wrong;}}
+function skip(){if(locked){advance();return;}const q=quiz[index];wrong++;wrongItems.push(q);locked=true;$("answer").disabled=true;$("feedback").innerHTML='<span class="bad">정답: '+q[2]+'</span>';$("submit").textContent="다음 문제";$("score").textContent="정답 "+correct+" · 오답 "+wrong;}
+function finish(){ $("quiz").classList.add("hidden");$("result").classList.remove("hidden");const pct=Math.round(correct/quiz.length*100);$("final").textContent=correct+" / "+quiz.length;$("msg").textContent=pct===100?"완벽해요! 🎉":pct>=80?"아주 잘했어요! "+pct+"점":pct+"점 — 오답을 다시 복습해보세요.";$("wrongSummary").textContent=wrongItems.length?"틀린 단어 "+wrongItems.length+"개를 오답 재시험으로 다시 풀 수 있어요.":"틀린 단어가 없습니다!";}
+$("start").onclick=()=>start();$("submit").onclick=()=>locked?advance():check();$("skip").onclick=skip;$("retry").onclick=()=>start(lastSelection);$("retryWrong").onclick=()=>{if(wrongItems.length)start([...wrongItems]);};$("answer").addEventListener("keydown",e=>{if(e.key==="Enter")locked?advance():check();});
+</script>
+</body>
+</html>
